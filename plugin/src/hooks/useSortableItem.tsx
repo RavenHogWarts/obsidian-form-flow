@@ -4,7 +4,6 @@ import { CSSProperties } from "react";
 
 export default function (
 	id: string,
-	allowedEdges: string[] = ["top", "bottom"],
 	canSort?: () => boolean,
 	data?: any
 ) {
@@ -17,6 +16,8 @@ export default function (
 		transition,
 		isDragging,
 		isOver,
+		over,
+		active,
 	} = useSortable({
 		id,
 		disabled: canSort ? !canSort() : false,
@@ -30,10 +31,16 @@ export default function (
 		opacity: isDragging ? 0.5 : 1,
 	};
 
-	// dnd-kit 不直接支持 closestEdge 的概念
-	// 我们简化为只返回是否被 hover（isOver）
-	// 如果需要更精确的边缘检测，可以在 DropIndicator 中实现
-	const closestEdge = isOver ? "bottom" : null;
+	// 根据被拖拽元素与目标项中心点的相对位置判断插入边缘：
+	// 拖到目标项上半部分时显示上边缘（插入到目标之前），下半部分时显示下边缘（插入到目标之后），
+	// 使视觉指示与 arrayMove 的实际结果保持一致。
+	let closestEdge: "top" | "bottom" | null = null;
+	const activeRect = active?.rect.current.translated;
+	if (isOver && over && activeRect) {
+		const activeCenter = activeRect.top + activeRect.height / 2;
+		const overCenter = over.rect.top + over.rect.height / 2;
+		closestEdge = activeCenter < overCenter ? "top" : "bottom";
+	}
 
 	return {
 		closestEdge,

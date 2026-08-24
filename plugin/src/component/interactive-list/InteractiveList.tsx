@@ -104,7 +104,7 @@ export function InteractiveListItem<T extends WithId>({
 		attributes,
 		listeners,
 		style: sortableStyle,
-	} = useSortableItem(item.id, ["top", "bottom"], () => true);
+	} = useSortableItem(item.id, () => true);
 
 	const combinedStyle = {
 		...sortableStyle,

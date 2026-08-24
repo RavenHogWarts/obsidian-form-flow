@@ -82,10 +82,3 @@ export function SortableProvider<T>(props: SortableContextProps<T>) {
 		</DndContext>
 	);
 }
-
-// 保持向下兼容的默认导出
-export default function <T>(props: Omit<SortableContextProps<T>, "children">) {
-	// 这个版本用于不需要 children 的场景
-	// 实际的拖拽功能由 SortableProvider 提供
-	return null;
-}
